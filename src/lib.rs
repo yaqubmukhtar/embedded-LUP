@@ -1,3 +1,4 @@
+#![no_std]
 //! ## *Implementations of sin, cos, and tan using precalculated tables.*
 //!
 //! Using these functions can significantly improve performance on systems with
@@ -19,7 +20,6 @@
 //!     let sine = table.sin(PI_F32);
 //! }
 //! ```
-
 
 pub use ape_table_trig_macros::*;
 
@@ -52,11 +52,7 @@ pub const GEN_LIMIT_F64: f64 = QUART_CIRC_F64;
 /// Get the absolute value of a float. F32.
 pub fn abs_f32(float: f32) -> f32 {
     // Ungodly ugly, but it optimises down really well
-    f32::from_ne_bytes(
-        (u32::from_ne_bytes(
-            float.to_ne_bytes()
-        ) & (u32::MAX >> 1)).to_ne_bytes()
-    )
+    f32::from_ne_bytes((u32::from_ne_bytes(float.to_ne_bytes()) & (u32::MAX >> 1)).to_ne_bytes())
 }
 
 #[inline]
@@ -79,11 +75,7 @@ pub fn rem_64(a: f64, b: f64) -> f64 {
 /// Get the absolute value of a float. F64.
 pub fn abs_f64(float: f64) -> f64 {
     // Ungodly ugly, but it optimises down really well
-    f64::from_ne_bytes(
-        (u64::from_ne_bytes(
-            float.to_ne_bytes()
-        ) & (u64::MAX >> 1)).to_ne_bytes()
-    )
+    f64::from_ne_bytes((u64::from_ne_bytes(float.to_ne_bytes()) & (u64::MAX >> 1)).to_ne_bytes())
 }
 
 /// Used to perform sin, cos, and tan functions on trig tables. F32.
@@ -94,9 +86,7 @@ pub struct TrigTableF32 {
 impl TrigTableF32 {
     /// Create a table struct with a reference to a static table.
     pub fn new(table: &'static [f32]) -> Self {
-        Self {
-            table
-        }
+        Self { table }
     }
 
     /// Calculate the approximate sine of the radians provided.
@@ -155,9 +145,7 @@ pub struct TrigTableF64 {
 impl TrigTableF64 {
     /// Create a table struct with a reference to a static table.
     pub fn new(table: &'static [f64]) -> Self {
-        Self {
-            table
-        }
+        Self { table }
     }
 
     /// Calculate the approximate sine of the radians provided.
@@ -223,7 +211,7 @@ mod tests {
         // kicks in past the GEN_LIMIT
         for i in 0..1000 {
             // Go through the table and verify everything
-            let radians = (i as f32)/4000.0 * FULL_CIRC_F32;
+            let radians = (i as f32) / 4000.0 * FULL_CIRC_F32;
 
             let sin1 = radians.sin();
             let sin2 = table.sin(radians);
@@ -236,13 +224,13 @@ mod tests {
         assert_eq!(table.sin(HALF_CIRC_F32), 0.0);
         assert_eq!(table.sin(HALF_CIRC_F32 + QUART_CIRC_F32), -1.0);
         assert_eq!(table.sin(FULL_CIRC_F32), 0.0);
-        
+
         assert_eq!(table.sin(-QUART_CIRC_F32), -1.0);
         assert_eq!(table.sin(-HALF_CIRC_F32), 0.0);
         assert_eq!(table.sin(-HALF_CIRC_F32 - QUART_CIRC_F32), 1.0);
         assert_eq!(table.sin(-FULL_CIRC_F32), 0.0);
     }
-    
+
     #[test]
     fn test_sin_f64() {
         let table = TrigTableF64::new(&TABLE_F64);
@@ -251,7 +239,7 @@ mod tests {
         // kicks in past the GEN_LIMIT
         for i in 0..1_000_000 {
             // Go through the table and verify everything
-            let radians = (i as f64)/4_000_000.0 * FULL_CIRC_F64;
+            let radians = (i as f64) / 4_000_000.0 * FULL_CIRC_F64;
 
             let sin1 = radians.sin();
             let sin2 = table.sin(radians);
@@ -264,7 +252,7 @@ mod tests {
         assert_eq!(table.sin(HALF_CIRC_F64), 0.0);
         assert_eq!(table.sin(HALF_CIRC_F64 + QUART_CIRC_F64), -1.0);
         assert_eq!(table.sin(FULL_CIRC_F64), 0.0);
-        
+
         assert_eq!(table.sin(-QUART_CIRC_F64), -1.0);
         assert_eq!(table.sin(-HALF_CIRC_F64), 0.0);
         assert_eq!(table.sin(-HALF_CIRC_F64 - QUART_CIRC_F64), 1.0);
