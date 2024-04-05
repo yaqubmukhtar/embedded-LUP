@@ -14,4 +14,3 @@ repository = "https://github.com/Gip-Gip/ape-table-trig"
 
 [lib]
 proc-macro = true
-
